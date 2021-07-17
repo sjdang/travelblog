@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.sjdang.manage.dao.CompanyDao">
+
+	<select id="findAllCompany" resultType="com.sjdang.manage.entity.Company">
+		select * from company
+	</select>
+
+	<select id="findByPage" parameterType="com.sjdang.util.page.DataTableVO"
+		resultType="com.sjdang.manage.entity.Company">
+		select * from company order by companyCode limit
+		${start},${length}
+	</select>
+
+	<select id="getTotalCount" resultType="Integer">
+		select count(*) from
+		company
+	</select>
+
+</mapper>

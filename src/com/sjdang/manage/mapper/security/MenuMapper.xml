@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.sjdang.manage.dao.security.MenuDao">
+
+	<insert id="insert" parameterType="menuEntity">
+		INSERT INTO
+		tb_manage_menu(menu_code,menu_name,menu_icon,menu_url,menu_desc,menu_sort,parent_id,is_valid,create_user,create_time,last_update_user,last_update_time)
+		VALUES
+		(#{menuCode},#{menuName},#{menuIcon},#{menuUrl},#{menuDesc},${menuSort},${parentId},${isValid},${createUser},NOW(),${lastUpdateUser},NOW())
+	</insert>
+
+	<update id="update" parameterType="menuEntity">
+		UPDATE tb_manage_menu
+		SET
+		<if test="menuName != null">
+			menu_name = #{menuName},
+		</if>
+		<if test="menuIcon != null">
+			menu_icon = #{menuIcon},
+		</if>
+		<if test="menuUrl != null">
+			menu_url = #{menuUrl},
+		</if>
+		<if test="menuDesc != null">
+			menu_desc = #{menuDesc},
+		</if>
+		<if test="menuSort != null">
+			menu_sort = ${menuSort},
+		</if>
+		<if test="isValid != null">
+			is_valid = ${isValid},
+		</if>
+		<if test="lastUpdateUser != null">
+			last_update_user = ${lastUpdateUser},
+		</if>
+		last_update_time = NOW()
+		WHERE menu_id = ${menuId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM tb_manage_menu
+		WHERE 1=1
+		<if test="menuId != null">
+			AND menu_id = ${menuId}
+		</if>
+		<if test="parentId != null">
+			AND parent_id = ${parentId}
+		</if>
+	</delete>
+
+	<select id="findOne" resultType="menuEntity">
+		SELECT t1.*,t2.menu_code
+		parent_menu_code,t2.menu_name parent_menu_name
+		FROM tb_manage_menu t1
+		LEFT JOIN tb_manage_menu t2
+		ON t1.parent_id = t2.menu_id
+		WHERE t1.menu_id = ${menuId}
+	</select>
+
+	<select id="findAll" resultType="menuEntity">
+		SELECT * FROM tb_manage_menu
+		ORDER BY menu_sort
+	</select>
+
+	<select id="getMaxCode" resultType="menuEntity">
+		SELECT * FROM tb_manage_menu
+		WHERE parent_id = ${parentId} ORDER BY menu_code DESC LIMIT 1
+	</select>
+
+</mapper>

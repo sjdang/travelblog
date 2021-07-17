@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<!-- 引入database.properties文件 -->
+	<properties resource="com/resources/datasource.properties" />
+
+	<settings>
+		<!-- MyBatis自动匹配table字段和bean属性 -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+
+	<!-- 设置类的别名 -->
+	<typeAliases>
+		<!-- 自动根据包取别名，把包下面的所有类都按类名来取别名 -->
+		<package name="com.sjdang.manage.entity.login" />
+		<package name="com.sjdang.manage.entity.common" />
+		<package name="com.sjdang.manage.entity.security" />
+		<package name="com.sjdang.mobile.entity" />
+		<!-- <typeAlias alias="ManageUser" type="com.sjdang.manage.entity.login.ManageUserEntity"/> -->
+	</typeAliases>
+
+	<!-- <environments default="development"> <environment id="development"> 
+		配置事务管理 ，采用JDBC管理事务 <transactionManager type="JDBC"/> POOLED 是基于 MyBatis 的数据源 
+		<dataSource type="POOLED"> <property name="driver" value="${mysql_driver}"/> 
+		<property name="url" value="${mysql_url}"/> <property name="username" value="${mysql_username}"/> 
+		<property name="password" value="${mysql_password}"/> </dataSource> </environment> 
+		</environments> -->
+
+	<!-- POJO的映射文件*Mapper.xml引入到配置文件中 -->
+	<!-- <mappers> <mapper resource="com/sjdang/manage/mapper/login/ManageUserMapper.xml"/> 
+		<package name="com.sjdang.manage.mapper"/> <package name="com.sjdang.mobile.mapper"/> 
+		</mappers> -->
+
+</configuration>

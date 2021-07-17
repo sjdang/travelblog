@@ -1,0 +1,11 @@
+.pace .pace-progress,.nano>.nano-pane>.nano-slider {
+	background-color: #0c80df;
+}
+
+.pace .pace-progress-inner {
+	box-shadow: 0 0 10px #42a5f5, 0 0 5px #42a5f5;
+}
+
+.pace .pace-activity {
+	background-color: #42a5f5;
+}

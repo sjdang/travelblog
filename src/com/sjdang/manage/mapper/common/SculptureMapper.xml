@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.sjdang.manage.dao.common.SculptureDao">
+
+	<insert id="create" parameterType="sculptureEntity">
+		INSERT INTO
+		tb_common_sculpture(sculpture_url,sculpture_class,gender_role,is_valid,create_user,create_time,last_update_user,last_update_time)
+		VALUES
+		(#{sculptureUrl},#{sculptureClass},${genderRole},${isValid},${createUser},NOW(),${lastUpdateUser},NOW())
+	</insert>
+
+	<update id="update" parameterType="sculptureEntity">
+		UPDATE tb_common_sculpture
+		SET
+		<if test="sculptureUrl != null">
+			sculpture_url = #{sculptureUrl},
+		</if>
+		<if test="sculptureClass != null">
+			sculpture_class = #{sculptureClass},
+		</if>
+		<if test="genderRole != null">
+			gender_role = ${genderRole},
+		</if>
+		<if test="isValid != null">
+			is_valid = ${isValid},
+		</if>
+		<if test="lastUpdateUser != null">
+			last_update_user = ${lastUpdateUser},
+		</if>
+		last_update_time = NOW()
+		WHERE sculpture_id = ${sculptureId}
+	</update>
+
+	<select id="list" parameterType="java.util.Map" resultType="sculptureEntityVO">
+		SELECT s.*,u.user_name create_user_name,user.user_name
+		last_update_user_name
+		FROM tb_common_sculpture s
+		LEFT JOIN tb_manage_user u
+		ON s.create_user = u.user_id
+		LEFT JOIN tb_manage_user user
+		ON s.last_update_user = user.user_id
+		WHERE 1 = 1
+		<if test="genderRole != null">
+			AND s.gender_role = ${genderRole}
+		</if>
+		<if test="isValid != null">
+			AND s.is_valid = ${isValid}
+		</if>
+		<if test="createUser != null">
+			AND s.create_user = ${createUser}
+		</if>
+		ORDER BY s.create_time DESC
+		<if test="start != null">
+			LIMIT ${start},${length}
+		</if>
+	</select>
+
+	<select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM tb_common_sculpture
+		WHERE 1 = 1
+		<if test="genderRole != null">
+			AND gender_role = ${genderRole}
+		</if>
+		<if test="isValid != null">
+			AND is_valid = ${isValid}
+		</if>
+		<if test="createUser != null">
+			AND create_user = ${createUser}
+		</if>
+	</select>
+
+</mapper>

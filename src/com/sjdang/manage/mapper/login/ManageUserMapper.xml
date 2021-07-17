@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.sjdang.manage.dao.login.ManageUserDao">
+
+	<!-- 通过resultMap映射实体类属性名和表的字段名对应关系 -->
+	<resultMap id="ManageUserMapping"
+		type="com.sjdang.manage.entity.login.ManageUserEntity">
+		<!-- id属性来映射主键字段 -->
+		<id column="user_id" property="userId" />
+		<!-- result属性映射非主键字段 -->
+		<result column="user_no" property="userNo" />
+		<result column="user_name" property="userName" />
+		<result column="user_level" property="userLevel" />
+		<result column="image_url" property="imageUrl" />
+		<result column="is_valid" property="isValid" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+	</resultMap>
+
+	<!-- 登录历史日志表映射 -->
+	<resultMap id="LoginHistoryMapping"
+		type="com.sjdang.manage.entity.login.LoginHistoryEntity">
+		<id column="history_id" property="historyId" />
+		<result column="session_id" property="sessionId" />
+		<result column="user_type" property="userType" />
+		<result column="user_id" property="userId" />
+		<result column="login_time" property="loginTime" />
+		<result column="logout_time" property="logoutTime" />
+	</resultMap>
+
+	<select id="findOne" resultType="manageUserEntity">
+		select * from tb_manage_user
+		where user_no = #{userNo}
+	</select>
+
+	<select id="findAll" resultType="manageUserEntity">
+		select * from tb_manage_user
+	</select>
+
+	<select id="findAllUser" resultType="manageUserEntity">
+		select * from tb_manage_user
+	</select>
+
+
+	<insert id="createLoginHistory" parameterType="com.sjdang.manage.entity.login.LoginHistoryEntity">
+		insert into
+		tb_login_history(session_id,user_type,user_id,login_time)
+		values(#{sessionId},${userType},${userId},#{loginTime})
+	</insert>
+
+	<update id="updateLogoutTime" parameterType="String">
+		update
+		tb_login_history set logout_time = now() where session_id =
+		#{sessionId}
+	</update>
+
+	<select id="listLoginHistory" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT log.history_id, log.session_id, IFNULL(log.login_time, '')
+		login_time, IFNULL(log.logout_time, '') logout_time, user.*
+		FROM tb_login_history log
+		<if test="userType == 1">
+			LEFT JOIN tb_manage_user user
+			ON log.user_id = user.user_id
+		</if>
+		WHERE 1 = 1
+		<if test="userId != null">
+			AND log.user_id = ${userId}
+		</if>
+		<if test="searchValue != null">
+			AND (user.user_no LIKE
+			'%${searchValue}%' OR user.user_name LIKE '%${searchValue}%')
+		</if>
+		ORDER BY log.login_time DESC
+		<if test="start != null">
+			LIMIT ${start},${length}
+		</if>
+	</select>
+
+	<select id="getLoginHistoryCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM tb_login_history log
+		<if test="userType == 1">
+			LEFT JOIN tb_manage_user user
+			ON log.user_id = user.user_id
+		</if>
+		WHERE 1 = 1
+		<if test="userId != null">
+			AND log.user_id = ${userId}
+		</if>
+		<if test="searchValue != null">
+			AND (user.user_no LIKE
+			'%${searchValue}%' OR user.user_name LIKE '%${searchValue}%')
+		</if>
+	</select>
+
+	<select id="getLatestLoginHistory" resultType="String">
+		SELECT DATE_FORMAT(log.login_time, '%Y-%m-%d %H:%i') last_login_time
+		FROM tb_login_history log
+		WHERE 1 = 1
+		<if test="userId != null">
+			AND log.user_id = ${userId}
+		</if>
+		ORDER BY log.login_time DESC
+		LIMIT 1,1
+	</select>
+
+</mapper>

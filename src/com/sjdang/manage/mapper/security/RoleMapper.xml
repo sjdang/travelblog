@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.sjdang.manage.dao.security.RoleDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId"
+		parameterType="roleEntity">
+		INSERT INTO
+		tb_manage_role(role_code,role_name,role_level,role_desc,is_valid,create_user,create_time,last_update_user,last_update_time)
+		VALUES
+		(#{roleCode},#{roleName},${roleLevel},#{roleDesc},${isValid},${createUser},NOW(),${lastUpdateUser},NOW())
+	</insert>
+
+	<update id="update" parameterType="roleEntity">
+		UPDATE tb_manage_role
+		SET
+		<if test="roleName != null">
+			role_name = #{roleName},
+		</if>
+		<if test="roleLevel != null">
+			role_level = ${roleLevel},
+		</if>
+		<if test="roleDesc != null">
+			role_desc = #{roleDesc},
+		</if>
+		<if test="isValid != null">
+			is_valid = ${isValid},
+		</if>
+		<if test="lastUpdateUser != null">
+			last_update_user = ${lastUpdateUser},
+		</if>
+		last_update_time = NOW()
+		WHERE role_id = ${roleId}
+	</update>
+
+	<select id="list" parameterType="roleEntity" resultType="roleEntity">
+		SELECT t.*,u.user_name create_user_name,user.user_name
+		last_update_user_name
+		FROM tb_manage_role t
+		LEFT JOIN tb_manage_user u
+		ON t.create_user = u.user_id
+		LEFT JOIN tb_manage_user user
+		ON t.last_update_user = user.user_id
+		WHERE 1 = 1
+		<if test="roleCode != null">
+			AND t.role_code = #{roleCode}
+		</if>
+		<if test="isValid != null">
+			AND t.is_valid = ${isValid}
+		</if>
+		<if test="createUser != null">
+			AND t.create_user = ${createUser}
+		</if>
+		ORDER BY t.create_time DESC
+		<if test="start != null">
+			LIMIT ${start},${length}
+		</if>
+	</select>
+
+	<select id="count" parameterType="roleEntity" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM tb_manage_role t
+		WHERE 1 = 1
+		<if test="roleCode != null">
+			AND t.role_code = #{roleCode}
+		</if>
+		<if test="isValid != null">
+			AND t.is_valid = ${isValid}
+		</if>
+		<if test="createUser != null">
+			AND t.create_user = ${createUser}
+		</if>
+	</select>
+
+</mapper>
